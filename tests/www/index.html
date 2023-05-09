@@ -1,0 +1,255 @@
+<html>
+  <head>
+    <title>add-javascript</title>
+    <link rel="stylesheet" href="./dark.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>add-javascript / tests</h1>
+
+        <p>To run the tests, use <code>pnpm run test</code> from the CLI.</p>
+
+        <ul>
+          <li>
+            <p id="script-classic-inline">Inline script.</p>
+          </li>
+          <li>
+            <p id="script-classic">Standard script.</p>
+          </li>
+          <li>
+            <p id="script-classic-defer">Deferred standard script.</p>
+          </li>
+          <li>
+            <p id="script-module">Module script.</p>
+          </li>
+          <li>
+            <p id="script-404">404 script not found.</p>
+          </li>
+          <li>
+            <p id="script-classic-skipped">Skipped script should not load.</p>
+          </li>
+          <li>
+            <p id="script-skip-if-module-support">
+              Script should not load if modules supported.
+            </p>
+          </li>
+          <li>
+            <p id="react-root"></p>
+          </li>
+          <li>
+            <p id="mithril-root"></p>
+          </li>
+          <li>
+            <p id="solidjs-root"></p>
+          </li>
+        </ul>
+
+        <p id="callback-count"></p>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://cdn.skypack.dev/react",
+          "react-dom": "https://cdn.skypack.dev/react-dom",
+          "mithril": "https://cdn.skypack.dev/mithril",
+          "mithril-hooks": "https://cdn.skypack.dev/mithril-hooks",
+          "solid-js": "https://cdn.skypack.dev/solid-js",
+          "solid-js/web": "https://cdn.skypack.dev/solid-js/web",
+          "solid-js/html": "https://cdn.skypack.dev/solid-js/html"
+        }
+      }
+    </script>
+
+    <script src="./injections/script-classic-inline.js"></script>
+
+    <script type="module">
+      import { loadScript, makeHook } from "./add-javascript";
+
+      let callbackCount = 0;
+
+      function drawCallbackCount() {
+        document.getElementById(
+          "callback-count"
+        ).innerHTML = `Callback count: ${callbackCount}`;
+      }
+
+      function bumpCallbackCount() {
+        callbackCount++;
+        drawCallbackCount();
+      }
+
+      function makePromise() {
+        let resolve;
+        let reject;
+        const promise = new Promise((res, rej) => {
+          resolve = res;
+          reject = rej;
+        });
+        return [promise, resolve, reject];
+      }
+
+      function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      const [reactHookLoaded, resolveReactHook] = makePromise();
+      const [mithrilHookLoaded, resolveMithrilHook] = makePromise();
+      const [solidJSHookLoaded, resolveSolidJSHook] = makePromise();
+
+      //
+      // React Hook test
+      //
+
+      import React from "react";
+      import ReactDOM from "react-dom";
+
+      const useScriptReact = makeHook(React);
+
+      function ReactComponent(props) {
+        const [state] = useScriptReact("./injections/script-from-react.js");
+
+        React.useEffect(() => {
+          if (state !== "loaded") {
+            return;
+          }
+          bumpCallbackCount();
+          resolveReactHook();
+        }, [state]);
+
+        return React.createElement(
+          "div",
+          { id: "script-from-react" },
+          "Script loaded by React hook."
+        );
+      }
+
+      ReactDOM.render(
+        React.createElement(ReactComponent),
+        document.getElementById("react-root")
+      );
+
+      //
+      // Mithril Hook test
+      //
+
+      import m from "mithril";
+      import * as mithrilHooks from "mithril-hooks";
+
+      const useScriptMithril = makeHook(mithrilHooks);
+
+      function MithrilComponent() {
+        const [state] = useScriptMithril("./injections/script-from-mithril.js");
+
+        mithrilHooks.useEffect(() => {
+          if (state !== "loaded") {
+            return;
+          }
+          bumpCallbackCount();
+          resolveMithrilHook();
+        }, [state]);
+
+        return m(
+          "div",
+          { id: "script-from-mithril" },
+          "Script loaded by Mithril hook."
+        );
+      }
+
+      m.mount(
+        document.getElementById("mithril-root"),
+        mithrilHooks.withHooks(MithrilComponent)
+      );
+
+      //
+      // SolidJS Hook test
+      //
+
+      import { createSignal, createEffect } from "solid-js";
+      import { render } from "solid-js/web";
+      import html from "solid-js/html";
+
+      const useScriptSolidJS = makeHook({
+        useState: createSignal,
+        useEffect: createEffect
+      });
+
+      function SolidJSComponent() {
+        const [state] = useScriptSolidJS("./injections/script-from-solidjs.js");
+
+        createEffect(() => {
+          if (state() !== "loaded") {
+            return;
+          }
+          bumpCallbackCount();
+          resolveSolidJSHook();
+        });
+
+        return html`
+          <div id="script-from-solidjs">Script loaded by SolidJS hook.</div>
+        `;
+      }
+
+      render(SolidJSComponent, document.getElementById("solidjs-root"));
+
+      //
+      // All tests
+      //
+
+      const allTests = [
+        // duplicated to test memo capability
+        loadScript("./injections/script-classic.js").then(bumpCallbackCount),
+        loadScript("./injections/script-classic.js").then(bumpCallbackCount),
+
+        loadScript("./injections/script-classic-defer.js", {
+          loadBehavior: "defer"
+        }).then(bumpCallbackCount),
+
+        loadScript("./injections/script-module.js", { isModule: true }).then(
+          bumpCallbackCount
+        ),
+
+        loadScript("./injections/404.js").catch(detail => {
+          bumpCallbackCount();
+          console.log(detail, "404.js failed to load, as expected");
+          document.getElementById("script-404").innerHTML +=
+            " <code>failed ok</code>";
+        }),
+
+        loadScript("./injections/script-classic-skipped.js", {
+          skipLoading: () => true
+        }).then(() => {
+          bumpCallbackCount();
+          document.getElementById("script-classic-skipped").innerHTML +=
+            " <code>skipped</code>";
+        }),
+
+        Promise.race([
+          delay(250).then(Promise.reject),
+          loadScript("./injections/script-skip-if-module-support.js", {
+            noopIfModulesSupported: true
+          })
+        ]).catch(() => {
+          bumpCallbackCount();
+          document.getElementById("script-skip-if-module-support").innerHTML +=
+            " <code>skipped</code>";
+        }),
+
+        reactHookLoaded,
+        mithrilHookLoaded,
+        solidJSHookLoaded
+      ];
+
+      //
+      // Signal back to the test runner
+      //
+
+      Promise.allSettled(allTests).then(() => {
+        console.log("all tests done");
+        window.signalTestRunFinished?.();
+      });
+    </script>
+  </body>
+</html>

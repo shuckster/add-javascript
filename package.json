@@ -1,0 +1,72 @@
+{
+  "name": "add-javascript",
+  "browserGlobalName": "addJs",
+  "version": "0.9.9",
+  "description": "Just add JavaScript. Includes validation, integrity checking, caching, and a cross-framework hook.",
+  "author": "Conan Theobald",
+  "license": "MIT",
+  "keywords": [
+    "load javascript",
+    "partition",
+    "grouping",
+    "apportion",
+    "filtering"
+  ],
+  "types": "index.d.ts",
+  "main": "./dist/cjs/add-javascript.cjs.js",
+  "module": "dist/esm/add-javascript.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/add-javascript.esm.js",
+      "require": "./dist/cjs/add-javascript.cjs.js",
+      "default": "./dist/cjs/add-javascript.cjs.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/package.json",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE",
+    "index.d.ts"
+  ],
+  "engines": {
+    "node": ">=15"
+  },
+  "homepage": "https://github.com/shuckster/add-javascript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shuckster/add-javascript"
+  },
+  "bugs": {
+    "url": "https://github.com/shuckster/add-javascript/issues",
+    "email": "bugs+add-javascript@conans.co.uk"
+  },
+  "scripts": {
+    "lint": "rome check src/ tests/",
+    "test": "concurrently \"pnpm run test:browser\" \"pnpm run test:exceptions\"",
+    "test:browser": "node ./tests/in-browser.js",
+    "test:exceptions": "node --test ./tests/exceptions.mjs",
+    "test:exceptions:watch": "node --test --watch ./tests/exceptions.mjs",
+    "build": "concurrently \"pnpm run build:esbuild\" \"pnpm run build:declaration\"",
+    "build:clean": "rimraf dist/ index.d.ts; mkdir -p dist/{esm,cjs,browser}",
+    "build:all": "pnpm run build:clean ; pnpm run build",
+    "build:esbuild": "node ./build-config/esbuild.mjs",
+    "build:declaration": "tsc --allowJs --declaration --emitDeclarationOnly --outFile index.d.ts index.mjs"
+  },
+  "devDependencies": {
+    "compose-paths": "^1.2.2",
+    "concurrently": "^8.0.1",
+    "esbuild": "^0.17.18",
+    "koa": "^2.14.2",
+    "koa-mount": "^4.0.0",
+    "koa-static": "^5.0.0",
+    "match-iz": "^3.10.0",
+    "puppeteer": "^20.1.1",
+    "rimraf": "^5.0.0",
+    "rome": "^12.1.0",
+    "typescript": "^5.0.4",
+    "viddy": "^2.2.2"
+  }
+}
