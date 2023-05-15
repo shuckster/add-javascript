@@ -6,11 +6,7 @@
   "author": "Conan Theobald",
   "license": "MIT",
   "keywords": [
-    "load javascript",
-    "partition",
-    "grouping",
-    "apportion",
-    "filtering"
+    "load javascript"
   ],
   "types": "index.d.ts",
   "main": "./dist/cjs/add-javascript.cjs.js",
