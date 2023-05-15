@@ -6,11 +6,6 @@
       alt="MIT license"
       src="https://img.shields.io/npm/l/add-javascript?style=plastic"
     /></a>
-  <a href="https://www.npmjs.com/package/add-javascript">
-    <img
-      alt="Downloads per week"
-      src="https://img.shields.io/npm/dw/add-javascript?style=plastic"
-    /></a>
   <a href="https://bundlephobia.com/result?p=add-javascript">
     <img
       alt="npm bundle size"
