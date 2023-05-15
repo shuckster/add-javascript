@@ -1,6 +1,5 @@
 <h1 align="center"><code>add-javascript</code> 📜</h1>
 
-<!--
 <p align="center">
   <a href="https://github.com/shuckster/add-javascript/blob/master/LICENSE">
     <img
@@ -22,7 +21,7 @@
       alt="Version"
       src="https://img.shields.io/npm/v/add-javascript?style=plastic"
     /></a>
-</p> -->
+</p>
 
 Just add JavaScript.
 
