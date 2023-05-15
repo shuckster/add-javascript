@@ -6,7 +6,10 @@
   "author": "Conan Theobald",
   "license": "MIT",
   "keywords": [
-    "load javascript"
+    "javascript loader",
+    "script loader",
+    "module loader",
+    "in browser"
   ],
   "types": "index.d.ts",
   "main": "./dist/cjs/add-javascript.cjs.js",
