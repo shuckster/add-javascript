@@ -35,12 +35,15 @@ import { addScript } from "add-javascript";
 
 addScript("https://www.example.com/script.js", options);
 // "added" | "already-added" | "already-added (unmanaged)" | "skipped"
-
-// "unmanaged" - means the script was not added by `add-javascript`
 //
-// "skipped" - means `skipLoading()` returned true. Callbacks will
-//             still have run, so this does not imply a no-op.
+//    "unmanaged" - means the script was not added by `add-javascript`
+//
+//    "skipped"   - means `skipLoading()` returned true. Callbacks will
+//                  still have run, so this does not imply a no-op.
+//
 ```
+
+`options` (defaults shown, see [index.d.ts](./index.d.ts) for all):
 
 ```js
 // options:
