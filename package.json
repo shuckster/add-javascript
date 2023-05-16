@@ -1,7 +1,7 @@
 {
   "name": "add-javascript",
   "browserGlobalName": "addJs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Just add JavaScript. Includes validation, integrity checking, caching, and a cross-framework hook.",
   "author": "Conan Theobald",
   "license": "MIT",
