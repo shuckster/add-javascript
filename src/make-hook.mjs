@@ -15,7 +15,7 @@ import { loadScript } from "./load-script.mjs";
  * import { createSignal, onMount } from "solid-js";
  * const useScript = makeHook({
  *   useState: createSignal,
- *   useEffect: onMount
+ *   useEffect: createEffect
  * });
  *
  * function YourComponent() {
