@@ -43,7 +43,7 @@ addScript("https://www.example.com/script.js", options);
 //
 ```
 
-`options` (defaults shown, see [index.d.ts](./index.d.ts) for all):
+`options` (defaults shown, see [index.d.ts](./index.d.ts) for all, `loadBehavior` visualised [here](./LOADVIZ.md)):
 
 ```js
 // options:
