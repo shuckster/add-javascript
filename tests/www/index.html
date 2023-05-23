@@ -67,6 +67,7 @@
 
     <script type="module">
       import { loadScript, makeHook } from "./add-javascript";
+      import { makePromise, delay } from "./utils.js";
 
       let callbackCount = 0;
 
@@ -79,20 +80,6 @@
       function bumpCallbackCount() {
         callbackCount++;
         drawCallbackCount();
-      }
-
-      function makePromise() {
-        let resolve;
-        let reject;
-        const promise = new Promise((res, rej) => {
-          resolve = res;
-          reject = rej;
-        });
-        return [promise, resolve, reject];
-      }
-
-      function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
       }
 
       const [reactHookLoaded, resolveReactHook] = makePromise();
