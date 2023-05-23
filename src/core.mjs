@@ -86,22 +86,25 @@ const upsertScriptCache = Memoize(
 
 export function scriptAlreadyInDocument(src, options) {
   const { ignoreQueryString = true } = options || {};
-  const isScriptInDoc = !!plainScriptTagsWithSrc().find((scriptEl) => {
+  const absoluteSrc = isAbsoluteURL(src) ? src : new URL(src, getWindow().location.href).href;
+  const isScriptInDoc = !!plainScriptTagsWithSrcSet().find((scriptEl) => {
     const existingSrc = scriptEl.src || "";
     if (!ignoreQueryString) {
-      return existingSrc === src;
+      return existingSrc === absoluteSrc;
     }
     const [path] = existingSrc.split("?");
-    return path === src;
+    return path === absoluteSrc;
   });
   return isScriptInDoc;
 }
 
-function plainScriptTagsWithSrc() {
+function plainScriptTagsWithSrcSet() {
   const els = getWindow().document.getElementsByTagName("script");
-  return Array.from(els)
-    .filter((el) => !el.type) // ignore modules, import-map
-    .filter((el) => el.src);
+  return (
+    Array.from(els)
+      .filter((el) => el.type !== 'importmap') // ignore importmaps
+      .filter((el) => el.src)
+  );
 }
 
 /**
