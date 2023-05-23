@@ -29,6 +29,7 @@ function assertDidNotThrow(fn) {
 function mockCreateScript() {
   globalThis.window = {
     location: {
+      href: "https://example.org",
       origin: "https://example.org",
     },
     document: {
