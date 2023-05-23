@@ -15,6 +15,9 @@
             <p id="script-classic-inline">Inline script.</p>
           </li>
           <li>
+            <p id="script-module-inline">Inline module script.</p>
+          </li>
+          <li>
             <p id="script-classic">Standard script.</p>
           </li>
           <li>
@@ -64,6 +67,7 @@
     </script>
 
     <script src="./injections/script-classic-inline.js"></script>
+    <script type="module" src="./injections/script-module-inline.js"></script>
 
     <script type="module">
       import { loadScript, makeHook } from "./add-javascript";
@@ -185,18 +189,53 @@
       // All tests
       //
 
+      const getScriptEls = url => () =>
+        document.querySelectorAll(`script[src="${url}"]`);
+
+      const assertSingleScriptTag = selector => scriptEls => {
+        if (scriptEls.length > 1) {
+          const el = document.querySelector(selector);
+          const [left] = el.innerHTML.split("<code>").map(x => x.trim());
+          document.querySelector(selector).innerHTML =
+            left + " <code>multiple</code>";
+        }
+      };
+
       const allTests = [
+        loadScript("./injections/script-classic-inline.js")
+          .then(bumpCallbackCount)
+          .then(getScriptEls("./injections/script-classic-inline.js"))
+          .then(assertSingleScriptTag("#script-classic-inline")),
+
+        loadScript("./injections/script-module-inline.js", { isModule: true })
+          .then(bumpCallbackCount)
+          .then(getScriptEls("./injections/script-module-inline.js"))
+          .then(assertSingleScriptTag("#script-module-inline")),
+
         // duplicated to test memo capability
-        loadScript("./injections/script-classic.js").then(bumpCallbackCount),
-        loadScript("./injections/script-classic.js").then(bumpCallbackCount),
+        Promise.allSettled([
+          loadScript("./injections/script-classic.js").then(bumpCallbackCount),
+          loadScript("./injections/script-classic.js").then(bumpCallbackCount),
+        ])
+          .then(getScriptEls("./injections/script-classic.js"))
+          .then(assertSingleScriptTag("#script-classic")),
 
         loadScript("./injections/script-classic-defer.js", {
-          loadBehavior: "defer"
+          loadBehavior: "defer",
         }).then(bumpCallbackCount),
 
-        loadScript("./injections/script-module.js", { isModule: true }).then(
-          bumpCallbackCount
-        ),
+        // duplicated to test memo capability
+        Promise.allSettled([
+          loadScript("./injections/script-module.js", { isModule: true }).then(
+            bumpCallbackCount,
+          ),
+
+          loadScript("./injections/script-module.js", { isModule: true }).then(
+            bumpCallbackCount,
+          ),
+        ])
+          .then(getScriptEls("./injections/script-module.js"))
+          .then(assertSingleScriptTag("#script-module")),
 
         loadScript("./injections/404.js").catch(detail => {
           bumpCallbackCount();
