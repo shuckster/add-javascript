@@ -77,7 +77,7 @@
 
       function drawCallbackCount() {
         document.getElementById(
-          "callback-count"
+          "callback-count",
         ).innerHTML = `Callback count: ${callbackCount}`;
       }
 
@@ -113,13 +113,13 @@
         return React.createElement(
           "div",
           { id: "script-from-react" },
-          "Script loaded by React hook."
+          "Script loaded by React hook.",
         );
       }
 
       ReactDOM.render(
         React.createElement(ReactComponent),
-        document.getElementById("react-root")
+        document.getElementById("react-root"),
       );
 
       //
@@ -145,13 +145,13 @@
         return m(
           "div",
           { id: "script-from-mithril" },
-          "Script loaded by Mithril hook."
+          "Script loaded by Mithril hook.",
         );
       }
 
       m.mount(
         document.getElementById("mithril-root"),
-        mithrilHooks.withHooks(MithrilComponent)
+        mithrilHooks.withHooks(MithrilComponent),
       );
 
       //
@@ -164,7 +164,7 @@
 
       const useScriptSolidJS = makeHook({
         useState: createSignal,
-        useEffect: createEffect
+        useEffect: createEffect,
       });
 
       function SolidJSComponent() {
@@ -245,7 +245,7 @@
         }),
 
         loadScript("./injections/script-classic-skipped.js", {
-          skipLoading: () => true
+          skipLoading: () => true,
         }).then(() => {
           bumpCallbackCount();
           document.getElementById("script-classic-skipped").innerHTML +=
@@ -255,8 +255,8 @@
         Promise.race([
           delay(250).then(Promise.reject),
           loadScript("./injections/script-skip-if-module-support.js", {
-            noopIfModulesSupported: true
-          })
+            noopIfModulesSupported: true,
+          }),
         ]).catch(() => {
           bumpCallbackCount();
           document.getElementById("script-skip-if-module-support").innerHTML +=
@@ -265,7 +265,7 @@
 
         reactHookLoaded,
         mithrilHookLoaded,
-        solidJSHookLoaded
+        solidJSHookLoaded,
       ];
 
       //
