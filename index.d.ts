@@ -289,7 +289,7 @@ declare module "src/make-hook" {
      * import { createSignal, onMount } from "solid-js";
      * const useScript = makeHook({
      *   useState: createSignal,
-     *   useEffect: onMount
+     *   useEffect: createEffect
      * });
      *
      * function YourComponent() {
