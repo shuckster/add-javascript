@@ -49,10 +49,10 @@
     "test:exceptions": "node --test ./tests/exceptions.mjs",
     "test:exceptions:watch": "node --test --watch ./tests/exceptions.mjs",
     "build": "concurrently \"pnpm run build:esbuild\" \"pnpm run build:declaration\"",
-    "build:clean": "rimraf dist/ index.d.ts; mkdir -p dist/{esm,cjs,browser}",
+    "build:clean": "rimraf dist/ ; mkdir -p dist/{esm,cjs,browser}",
     "build:all": "pnpm run build:clean ; pnpm run build",
     "build:esbuild": "node ./build-config/esbuild.mjs",
-    "build:declaration": "tsc --allowJs --declaration --emitDeclarationOnly --outFile index.d.ts index.mjs"
+    "build:declaration": "tsc --allowJs --declaration --emitDeclarationOnly --outFile _index.d.ts index.mjs"
   },
   "devDependencies": {
     "compose-paths": "^1.2.3",
