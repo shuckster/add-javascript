@@ -26,7 +26,7 @@ function buildModule({ file, format, module, define }) {
         platform: "browser",
         globalName: pkg.browserGlobalName ?? globalName,
       }),
-      otherwise({ platform: "node" }),
+      otherwise({ platform: "node" })
     ),
     target: ["es2018"],
     minify: true,
@@ -46,8 +46,9 @@ function buildModule({ file, format, module, define }) {
 const writePackageJson = against(
   when({ module: defined, format: anyOf(Object.keys(moduleTypes)) })(
     ({ module, format }) =>
-      writeTextFile(module)(makePackageJsonForType(format)),
+      writeTextFile(module)(makePackageJsonForType(format))
   ),
+  otherwise(() => Promise.resolve())
 );
 
 function makePackageJsonForType(type = "esm") {
@@ -61,7 +62,7 @@ function makePackageJsonForType(type = "esm") {
 function getConcatenatedEsbuildContent(build) {
   return mergeTypedArrays(
     build.outputFiles.map((out) => out.contents),
-    Uint8Array,
+    Uint8Array
   );
 }
 
