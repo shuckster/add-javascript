@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.6] - 2023-12-17
+
+### Fixed
+
+- index.d.ts not generated correctly, manually fix.
+
 ## [1.0.5] - 2023-05-23
 
 ### Fixed
