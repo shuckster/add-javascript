@@ -153,36 +153,36 @@ declare module "src/validation" {
      * @param {string} name
      * @param {unknown} value
      * @throws {Error}
-     * @returns {void}
+     * @returns {asserts value is string}
      */
-    export function validateString(name: string, value: unknown): void;
+    export function validateString(name: string, value: unknown): asserts value is string;
     /**
      * Function validation.
      *
      * @param {string} name
      * @param {unknown} value
      * @throws {Error}
-     * @returns {void}
+     * @returns {asserts value is Function}
      */
-    export function validateFunction(name: string, value: unknown): void;
+    export function validateFunction(name: string, value: unknown): asserts value is Function;
     /**
      * Plain object validation.
      *
      * @param {string} name
      * @param {unknown} value
      * @throws {Error}
-     * @returns {void}
+     * @returns {asserts value is object}
      */
-    export function validatePojo(name: string, value: unknown): void;
+    export function validatePojo(name: string, value: unknown): asserts value is object;
     /**
      * Data-set object validation.
      *
      * @param {string} name
      * @param {unknown} value
      * @throws {Error}
-     * @returns {void}
+     * @returns {asserts value is object}
      */
-    export function validateDataSet(name: string, value: unknown): void;
+    export function validateDataSet(name: string, value: unknown): asserts value is object;
     /**
      * URL validation.
      *
