@@ -86,6 +86,19 @@
         drawCallbackCount();
       }
 
+      function runTest(description, promise) {
+        const [timeoutPromise, _, reject] = makePromise();
+        setTimeout(reject, 10 * 1000, new Error('timeout'));
+        return Promise.race([
+          promise,
+          timeoutPromise,
+        ]).catch((err) => {
+          const { message } = err
+          console.log(description, ': Error:', message);
+          throw err;
+        });
+      }
+
       const [reactHookLoaded, resolveReactHook] = makePromise();
       const [mithrilHookLoaded, resolveMithrilHook] = makePromise();
       const [solidJSHookLoaded, resolveSolidJSHook] = makePromise();
@@ -266,7 +279,9 @@
         reactHookLoaded,
         mithrilHookLoaded,
         solidJSHookLoaded,
-      ];
+      ].map((testPromise, index) => {
+        return runTest(`Test #${index}`, testPromise);
+      });
 
       //
       // Signal back to the test runner
