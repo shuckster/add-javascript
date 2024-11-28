@@ -256,7 +256,7 @@ tampered with.`,
   scriptMeta.promise = new Promise((resolve, reject) => {
     function removeScriptTag() {
       scriptMeta.invalidate?.();
-      el.parentNode.removeChild(el);
+      el?.parentNode?.removeChild?.(el);
     }
 
     el.addEventListener("load", (event) => {
