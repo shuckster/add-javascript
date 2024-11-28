@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "checkJs": true,
-    "lib": ["es2016", "dom"],
+    "lib": ["es2016", "dom"]
   },
-  "exclude": ["node_modules", "**/node_modules/*"],
+  "exclude": ["node_modules", "**/node_modules/*"]
 }
