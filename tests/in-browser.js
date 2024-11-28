@@ -99,19 +99,19 @@ async function main() {
   //
   // Inline script
   //
-  await assertContentAbsent("multiple", "#script-classic-inline");
+  await assertContentAbsent("multiple-scripts", "#script-classic-inline");
   await assertContentExists("loaded", "#script-classic-inline");
 
   //
   // Inline module script
   //
-  await assertContentAbsent("multiple", "#script-module-inline");
+  await assertContentAbsent("multiple-scripts", "#script-module-inline");
   await assertContentExists("loaded", "#script-module-inline");
 
   //
   // Standard script
   //
-  await assertContentAbsent("multiple", "#script-classic");
+  await assertContentAbsent("multiple-scripts", "#script-classic");
   await assertContentExists("loaded", "#script-classic");
 
   //
@@ -122,14 +122,14 @@ async function main() {
   //
   // Module script
   //
-  await assertContentAbsent("multiple", "#script-module");
+  await assertContentAbsent("multiple-scripts", "#script-module");
   await assertContentExists("loaded", "#script-module");
 
   //
   // 404 script not found
   //
   await assertContentAbsent("loaded", "#script-404");
-  await assertContentExists("failed ok", "#script-404");
+  await assertContentExists("failed-ok", "#script-404");
 
   //
   // Skipped scripts

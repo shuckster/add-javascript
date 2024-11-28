@@ -209,12 +209,12 @@
         document.querySelectorAll(`script[src="${url}"]`);
 
       const assertSingleScriptTag = selector => scriptEls => {
-        if (scriptEls.length > 1) {
-          const el = document.querySelector(selector);
-          const [left] = el.innerHTML.split("<code>").map(x => x.trim());
-          document.querySelector(selector).innerHTML =
-            left + " <code>multiple</code>";
+        if (scriptEls.length === 1) {
+          return;
         }
+        const el = document.querySelector(selector);
+        document.querySelector(selector).innerHTML = " <code>multiple-scripts</code>";
+      };
 
       const assertSingleCodeElement = selector => () => {
         const container = document.querySelector(selector);
@@ -232,12 +232,14 @@
         loadScript("./injections/script-classic-inline.js")
           .then(bumpCallbackCount)
           .then(getScriptEls("./injections/script-classic-inline.js"))
-          .then(assertSingleScriptTag("#script-classic-inline")),
+          .then(assertSingleScriptTag("#script-classic-inline"))
+          .then(assertSingleCodeElement("#script-classic-inline")),
 
         loadScript("./injections/script-module-inline.js", { isModule: true })
           .then(bumpCallbackCount)
           .then(getScriptEls("./injections/script-module-inline.js"))
-          .then(assertSingleScriptTag("#script-module-inline")),
+          .then(assertSingleScriptTag("#script-module-inline"))
+          .then(assertSingleCodeElement("#script-module-inline")),
 
         // duplicated to test memo capability
         Promise.allSettled([
@@ -245,7 +247,8 @@
           loadScript("./injections/script-classic.js").then(bumpCallbackCount),
         ])
           .then(getScriptEls("./injections/script-classic.js"))
-          .then(assertSingleScriptTag("#script-classic")),
+          .then(assertSingleScriptTag("#script-classic"))
+          .then(assertSingleCodeElement("#script-classic")),
 
         // test script removal/re-insertion
         loadScript("./injections/script-classic-with-duplicate.js")
@@ -276,13 +279,14 @@
           ),
         ])
           .then(getScriptEls("./injections/script-module.js"))
-          .then(assertSingleScriptTag("#script-module")),
+          .then(assertSingleScriptTag("#script-module"))
+          .then(assertSingleCodeElement("#script-module")),
 
         loadScript("./injections/404.js").catch(detail => {
           bumpCallbackCount();
           console.log(detail, "404.js failed to load, as expected");
           document.getElementById("script-404").innerHTML +=
-            " <code>failed ok</code>";
+            " <code>failed-ok</code>";
         }),
 
         loadScript("./injections/script-classic-skipped.js", {
