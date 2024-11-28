@@ -150,7 +150,7 @@ async function main() {
   //
   // Callbacks
   //
-  await assertContentExists("13", "#callback-count");
+  await assertContentExists("12", "#callback-count");
 
   // ...
 
