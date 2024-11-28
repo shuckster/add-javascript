@@ -29,7 +29,7 @@ export function validate(name, value, variations) {
  * @param {string} name
  * @param {unknown} value
  * @throws {Error}
- * @returns {void}
+ * @returns {asserts value is string}
  */
 export function validateString(name, value) {
   if (typeof value === "string") {
@@ -48,7 +48,7 @@ export function validateString(name, value) {
  * @param {string} name
  * @param {unknown} value
  * @throws {Error}
- * @returns {void}
+ * @returns {asserts value is Function}
  */
 export function validateFunction(name, value) {
   if (typeof value === "function") {
@@ -61,6 +61,12 @@ export function validateFunction(name, value) {
   );
 }
 
+/**
+ * Is plain object.
+ *
+ * @param {unknown} obj
+ * @returns {boolean}
+ */
 function isPojo(obj) {
   if (obj === null || typeof obj !== "object") {
     return false;
@@ -74,7 +80,7 @@ function isPojo(obj) {
  * @param {string} name
  * @param {unknown} value
  * @throws {Error}
- * @returns {void}
+ * @returns {asserts value is object}
  */
 export function validatePojo(name, value) {
   if (isPojo(value)) {
@@ -97,7 +103,7 @@ function stringIsCamelCase(str) {
  * @param {string} name
  * @param {unknown} value
  * @throws {Error}
- * @returns {void}
+ * @returns {asserts value is object}
  */
 export function validateDataSet(name, value) {
   validatePojo(name, value);
