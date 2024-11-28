@@ -31,6 +31,12 @@ function makePromise() {
   return [promise, resolve, reject];
 }
 
+function delay(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function main() {
   // Server
   const app = new Koa()
