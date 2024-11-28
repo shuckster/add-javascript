@@ -59,6 +59,7 @@ async function main() {
 
   // Comms.
   const page = await browser.newPage();
+  await page.setViewport({ width: 600, height: 1024 }); 
   const [inBrowserTestRun, resolve, reject] = makePromise();
   await page.exposeFunction("signalTestRunFinished", resolve);
   const timeoutId = setTimeout(
