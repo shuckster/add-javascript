@@ -95,14 +95,16 @@ const upsertScriptCache = Memoize(
 export function scriptAlreadyInDocument(src, options) {
   const { ignoreQueryString = true } = options || {};
   const absoluteSrc = isAbsoluteURL(src) ? src : new URL(src, getWindow().location.href).href;
-  const isScriptInDoc = !!plainScriptTagsWithSrcSet().find((scriptEl) => {
-    const existingSrc = scriptEl.src || "";
-    if (!ignoreQueryString) {
-      return existingSrc === absoluteSrc;
-    }
-    const [path] = existingSrc.split("?");
-    return path === absoluteSrc;
-  });
+  const isScriptInDoc = Boolean(
+    plainScriptTagsWithSrcSet().find((scriptEl) => {
+      const existingSrc = scriptEl.src || "";
+      if (!ignoreQueryString) {
+        return existingSrc === absoluteSrc;
+      }
+      const [path] = existingSrc.split("?");
+      return path === absoluteSrc;
+    })
+  );
   return isScriptInDoc;
 }
 
