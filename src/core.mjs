@@ -46,7 +46,15 @@ function getWindow() {
 /**
  * Upsert entry into the cache.
  */
+
 const upsertScriptCache = Memoize(
+  /**
+   * @param {object} options
+   * @param {string} [options.src]
+   * @param {boolean} [options.ignoreQueryString]
+   * @param {number} [options.ttlInSeconds]
+   * @param {() => void} invalidate
+   */
   ({ ttlInSeconds = Infinity }, invalidate) => {
     if (ttlInSeconds !== Infinity) {
       setTimeout(invalidate, ttlInSeconds * 1000);
