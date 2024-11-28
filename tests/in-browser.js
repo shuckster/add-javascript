@@ -141,6 +141,12 @@ async function main() {
   await assertContentAbsent("loaded", "#script-skip-if-module-support");
 
   //
+  // Duplicate script 
+  //
+  await assertContentExists("multiple-codes", "#script-classic-with-duplicate");
+  await assertContentExists("loaded", "#script-classic-with-duplicate");
+
+  //
   // React + Mithril + SolidJS Hooks
   //
   await assertContentExists("loaded", "#react-root");
@@ -150,7 +156,7 @@ async function main() {
   //
   // Callbacks
   //
-  await assertContentExists("12", "#callback-count");
+  await assertContentExists("14", "#callback-count");
 
   // ...
 

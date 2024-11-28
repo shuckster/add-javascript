@@ -21,6 +21,9 @@
             <p id="script-classic">Standard script.</p>
           </li>
           <li>
+            <p id="script-classic-with-duplicate">Standard script removed/added again.</p>
+          </li>
+          <li>
             <p id="script-classic-defer">Deferred standard script.</p>
           </li>
           <li>
@@ -212,6 +215,17 @@
           document.querySelector(selector).innerHTML =
             left + " <code>multiple</code>";
         }
+
+      const assertSingleCodeElement = selector => () => {
+        const container = document.querySelector(selector);
+        if (!container) {
+          throw new Error('No container');
+        }
+        const els = container.querySelectorAll('code');
+        if (els.length === 1) {
+          return;
+        }
+        document.querySelector(selector).innerHTML += " <code>multiple-codes</code>";
       };
 
       const allTests = [
@@ -232,6 +246,20 @@
         ])
           .then(getScriptEls("./injections/script-classic.js"))
           .then(assertSingleScriptTag("#script-classic")),
+
+        // test script removal/re-insertion
+        loadScript("./injections/script-classic-with-duplicate.js")
+          .then(({ removeScriptTag }) => {
+             removeScriptTag();
+             bumpCallbackCount();
+          })
+          .then(() => {
+            return loadScript("./injections/script-classic-with-duplicate.js")
+              .then(bumpCallbackCount)
+              .then(getScriptEls("./injections/script-classic-with-duplicate.js"))
+              .then(assertSingleScriptTag("#script-classic-with-duplicate"))
+              .then(assertSingleCodeElement("#script-classic-with-duplicate"))
+          }),
 
         loadScript("./injections/script-classic-defer.js", {
           loadBehavior: "defer",
