@@ -1,6 +1,6 @@
 /*
  * add-javascript
- * v1.0.7
+ * v1.0.8
  * https://github.com/shuckster/add-javascript
  * License: MIT
  */
