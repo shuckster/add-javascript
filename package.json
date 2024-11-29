@@ -43,7 +43,6 @@
     "email": "bugs+add-javascript@conans.co.uk"
   },
   "scripts": {
-    "postinstall": "pnpm dlx puppeteer install",
     "lint": "rome check src/ tests/",
     "test": "concurrently \"pnpm run test:browser\" \"pnpm run test:exceptions\"",
     "test:browser": "node ./tests/in-browser.js",
