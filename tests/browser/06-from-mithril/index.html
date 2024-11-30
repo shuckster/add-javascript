@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <title>add-javascript</title>
+    <link rel="stylesheet" href="./dark.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>add-javascript / tests</h1>
+
+        <p>To run the tests, use <code>pnpm run test</code> from the CLI.</p>
+
+        <ul>
+          <li>
+            <p id="mithril-root"></p>
+          </li>
+        </ul>
+
+        <p id="callback-count"></p>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "mithril": "https://cdn.skypack.dev/mithril",
+          "mithril-hooks": "https://cdn.skypack.dev/mithril-hooks",
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { loadScript, makeHook } from "/add-javascript";
+      import {
+        assertSingleCodeElement,
+        assertSingleScriptTag,
+        bumpCallbackCount,
+        getScriptEls,
+        runTest,
+      } from "/browser-utils";
+
+      const [mithrilHookLoaded, resolveMithrilHook] = makePromise();
+
+      //
+      // Mithril Hook test
+      //
+
+      import m from "mithril";
+      import * as mithrilHooks from "mithril-hooks";
+
+      const useScriptMithril = makeHook(mithrilHooks);
+
+      function MithrilComponent() {
+        const [state] = useScriptMithril("./script-from-mithril.js");
+
+        mithrilHooks.useEffect(() => {
+          if (state !== "loaded") {
+            return;
+          }
+          bumpCallbackCount();
+          resolveMithrilHook();
+        }, [state]);
+
+        return m(
+          "div",
+          { id: "script-from-mithril" },
+          "Script loaded by Mithril hook.",
+        );
+      }
+
+      m.mount(
+        document.getElementById("mithril-root"),
+        mithrilHooks.withHooks(MithrilComponent),
+      );
+
+      //
+      // All tests
+      //
+
+      const allTests = [
+        mithrilHookLoaded,
+      ].map((testPromise, index) => {
+        return runTest(`Test #${index}`, testPromise);
+      });
+
+      //
+      // Signal back to the test runner
+      //
+
+      Promise.allSettled(allTests).then(() => {
+        console.log("all tests done");
+        window.signalTestRunFinished?.();
+      });
+    </script>
+  </body>
+</html>
