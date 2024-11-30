@@ -48,7 +48,10 @@ async function findAvailablePort(startPort) {
 
     server.on("error", () => {
       server.close();
-      resolve(findAvailablePort(startPort + 1));
+      const staggeredRetry = Math.random() * 500;
+      delay(staggeredRetry).then(() => {
+        resolve(findAvailablePort(startPort + 1));
+      });
     });
   });
 }
