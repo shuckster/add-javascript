@@ -16,7 +16,7 @@
           </li>
         </ul>
 
-        <p id="callback-count">0</p>
+        <p id="callback-count"></p>
       </div>
     </div>
 
@@ -31,6 +31,8 @@
           "callback-count",
         ).innerHTML = `Callback count: ${callbackCount}`;
       }
+
+      drawCallbackCount();
 
       function bumpCallbackCount() {
         callbackCount++;

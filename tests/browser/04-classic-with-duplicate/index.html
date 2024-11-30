@@ -12,13 +12,16 @@
 
         <ul>
           <li>
-            <p id="script-classic-defer">Deferred standard script.</p>
+            <p id="script-classic-with-duplicate">Standard script removed/added again.</p>
           </li>
         </ul>
 
         <p id="callback-count"></p>
       </div>
     </div>
+
+    <script src="./script-classic-inline.js"></script>
+    <script type="module" src="./script-module-inline.js"></script>
 
     <script type="module">
       import { loadScript, makeHook } from "./add-javascript";
@@ -80,9 +83,19 @@
       };
 
       const allTests = [
-        loadScript("./script-classic-defer.js", {
-          loadBehavior: "defer",
-        }).then(bumpCallbackCount),
+        // test script removal/re-insertion
+        loadScript("./script-classic-with-duplicate.js")
+          .then(({ removeScriptTag }) => {
+             removeScriptTag();
+             bumpCallbackCount();
+          })
+          .then(() => {
+            return loadScript("./script-classic-with-duplicate.js")
+              .then(bumpCallbackCount)
+              .then(getScriptEls("./script-classic-with-duplicate.js"))
+              .then(assertSingleScriptTag("#script-classic-with-duplicate"))
+              .then(assertSingleCodeElement("#script-classic-with-duplicate"))
+          }),
       ].map((testPromise, index) => {
         return runTest(`Test #${index}`, testPromise);
       });
