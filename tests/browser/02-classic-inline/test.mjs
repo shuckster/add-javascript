@@ -6,7 +6,7 @@ import { httpServer, launchBrowser, openPage } from "../utils.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-describe("01-classic-defer", () => {
+describe("02-classic-inline", () => {
   let server;
   let port;
   let browser;
@@ -18,7 +18,7 @@ describe("01-classic-defer", () => {
   before(async () => {
     const $server = await httpServer(__dirname);
     server = $server.server;
-    port = $server.port; 
+    port = $server.port;
 
     const $browser = await launchBrowser();
     browser = $browser.browser;
@@ -41,10 +41,10 @@ describe("01-classic-defer", () => {
     server.close();
   });
 
-  it("finds the text added by a deferred script", async () => {
+  it("finds the text added by an inline script", async () => {
     //
-    // Deferred standard script
+    // Inline standard script
     //
-    await assertContentExists("loaded", "#script-classic-defer");
+    await assertContentExists("loaded", "#script-classic-inline");
   });
 });

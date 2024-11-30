@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <title>add-javascript</title>
+    <link rel="stylesheet" href="./dark.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>add-javascript / tests</h1>
+
+        <p>To run the tests, use <code>pnpm run test</code> from the CLI.</p>
+
+        <ul>
+          <li>
+            <p id="script-classic-inline">Inline script.</p>
+          </li>
+        </ul>
+
+        <p id="callback-count"></p>
+      </div>
+    </div>
+
+    <script type="module">
+      import { loadScript, makeHook } from "./add-javascript";
+      import { makePromise, delay } from "./utils.js";
+
+      let callbackCount = 0;
+
+      function drawCallbackCount() {
+        document.getElementById(
+          "callback-count",
+        ).innerHTML = `Callback count: ${callbackCount}`;
+      }
+
+      function bumpCallbackCount() {
+        callbackCount++;
+        drawCallbackCount();
+      }
+
+      function runTest(description, promise) {
+        const [timeoutPromise, _, reject] = makePromise();
+        setTimeout(reject, 10 * 1000, new Error('timeout'));
+        return Promise.race([
+          promise,
+          timeoutPromise,
+        ]).catch((err) => {
+          const { message } = err
+          console.log(description, ': Error:', message);
+          throw err;
+        });
+      }
+
+      //
+      // All tests
+      //
+
+      const getScriptEls = url => () =>
+        document.querySelectorAll(`script[src="${url}"]`);
+
+      const assertSingleScriptTag = selector => scriptEls => {
+        if (scriptEls.length === 1) {
+          return;
+        }
+        const el = document.querySelector(selector);
+        document.querySelector(selector).innerHTML = " <code>multiple-scripts</code>";
+      };
+
+      const assertSingleCodeElement = selector => () => {
+        const container = document.querySelector(selector);
+        if (!container) {
+          throw new Error('No container');
+        }
+        const els = container.querySelectorAll('code');
+        if (els.length === 1) {
+          return;
+        }
+        document.querySelector(selector).innerHTML += " <code>multiple-codes</code>";
+      };
+
+      const allTests = [
+        loadScript("./script-classic-inline.js")
+          .then(bumpCallbackCount)
+          .then(getScriptEls("./script-classic-inline.js"))
+          .then(assertSingleScriptTag("#script-classic-inline"))
+          .then(assertSingleCodeElement("#script-classic-inline")),
+      ].map((testPromise, index) => {
+        return runTest(`Test #${index}`, testPromise);
+      });
+
+      //
+      // Signal back to the test runner
+      //
+
+      Promise.allSettled(allTests).then(() => {
+        console.log("all tests done");
+        window.signalTestRunFinished?.();
+      });
+    </script>
+  </body>
+</html>

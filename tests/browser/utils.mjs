@@ -3,6 +3,7 @@ import mount from "koa-mount";
 import serve from "koa-static";
 import { deepEqual as assert, strictEqual } from "node:assert";
 import fs from "node:fs";
+import net from "node:net";
 import path from "node:path";
 import puppeteer, { Page } from "puppeteer";
 import { viddyIn } from "viddy/puppeteer";
@@ -37,12 +38,28 @@ export function delay(ms) {
   return new Promise(o => setTimeout(o, ms));
 }
 
+async function findAvailablePort(startPort) {
+  const server = net.createServer();
+  return new Promise((resolve) => {
+    server.listen(startPort, () => {
+      server.close();
+      resolve(startPort);
+    });
+
+    server.on("error", () => {
+      server.close();
+      resolve(findAvailablePort(startPort + 1));
+    });
+  });
+}
+
 /**
  * @param {string} __dirname
  */
-export function httpServer(__dirname) {
-  const app = new Koa();
+export async function httpServer(__dirname) {
+  const availablePort = await findAvailablePort(SERVER_PORT);
 
+  const app = new Koa();
   app.use(mount("/", serve(path.join(__dirname))));
   app.use(mount("/src", serve(path.join(__dirname, "../../../src"))));
   app.use(async (ctx, next) => {
@@ -55,8 +72,8 @@ export function httpServer(__dirname) {
     }
   });
 
-  const server = app.listen(SERVER_PORT);
-  return { app, server };
+  const server = app.listen(availablePort);
+  return { app, server, port: availablePort };
 }
 
 export async function launchBrowser() {
@@ -79,9 +96,8 @@ export async function launchBrowser() {
 /**
  * @param {Page} page
  */
-export async function openPage(page) {
-  const url = `http://localhost:${SERVER_PORT}/index.html`;
-  console.log("url", url);
+export async function openPage(page, port = SERVER_PORT) {
+  const url = `http://localhost:${port}/index.html`;
   await page.goto(url);
   const viddy = await viddyIn(page);
 
