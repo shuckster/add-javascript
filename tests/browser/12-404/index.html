@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <title>add-javascript</title>
+    <link rel="stylesheet" href="./dark.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>add-javascript / tests</h1>
+
+        <p>To run the tests, use <code>pnpm run test</code> from the CLI.</p>
+
+        <ul>
+          <li>
+            <p id="script-404">404 script not found.</p>
+          </li>
+        </ul>
+
+        <p id="callback-count"></p>
+      </div>
+    </div>
+
+    <script type="module">
+      import { loadScript, makeHook } from "/add-javascript";
+      import {
+        assertSingleCodeElement,
+        assertSingleScriptTag,
+        bumpCallbackCount,
+        getScriptEls,
+        runTest,
+        delay,
+      } from "/browser-utils";
+
+      //
+      // All tests
+      //
+
+      const allTests = [
+        loadScript("./404.js").catch(detail => {
+          bumpCallbackCount();
+          console.log(detail, "404.js failed to load, as expected");
+          document.getElementById("script-404").innerHTML +=
+            " <code>failed-ok</code>";
+        }),
+      ].map((testPromise, index) => {
+        return runTest(`Test #${index}`, testPromise);
+      });
+
+      //
+      // Signal back to the test runner
+      //
+
+      Promise.allSettled(allTests).then(() => {
+        console.log("all tests done");
+        window.signalTestRunFinished?.();
+      });
+    </script>
+  </body>
+</html>
