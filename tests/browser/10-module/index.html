@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <title>add-javascript</title>
+    <link rel="stylesheet" href="./dark.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>add-javascript / tests</h1>
+
+        <p>To run the tests, use <code>pnpm run test</code> from the CLI.</p>
+
+        <ul>
+          <li>
+            <p id="script-module">Module script.</p>
+          </li>
+        </ul>
+
+        <p id="callback-count"></p>
+      </div>
+    </div>
+
+    <script type="module">
+      import { loadScript, makeHook } from "/add-javascript";
+      import {
+        assertSingleCodeElement,
+        assertSingleScriptTag,
+        bumpCallbackCount,
+        getScriptEls,
+        runTest,
+      } from "/browser-utils";
+
+      //
+      // All tests
+      //
+
+      const allTests = [
+        // duplicated to test memo capability
+        Promise.allSettled([
+          loadScript("./script-module.js", { isModule: true }).then(
+            bumpCallbackCount,
+          ),
+
+          loadScript("./script-module.js", { isModule: true }).then(
+            bumpCallbackCount,
+          ),
+        ])
+          .then(getScriptEls("./script-module.js"))
+          .then(assertSingleScriptTag("#script-module"))
+          .then(assertSingleCodeElement("#script-module")),
+      ].map((testPromise, index) => {
+        return runTest(`Test #${index}`, testPromise);
+      });
+
+      //
+      // Signal back to the test runner
+      //
+
+      Promise.allSettled(allTests).then(() => {
+        console.log("all tests done");
+        window.signalTestRunFinished?.();
+      });
+    </script>
+  </body>
+</html>
