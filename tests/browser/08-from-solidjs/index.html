@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <title>add-javascript</title>
+    <link rel="stylesheet" href="./dark.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>add-javascript / tests</h1>
+
+        <p>To run the tests, use <code>pnpm run test</code> from the CLI.</p>
+
+        <ul>
+          <li>
+            <p id="solidjs-root"></p>
+          </li>
+        </ul>
+
+        <p id="callback-count"></p>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "solid-js": "https://cdn.skypack.dev/solid-js",
+          "solid-js/web": "https://cdn.skypack.dev/solid-js/web",
+          "solid-js/html": "https://cdn.skypack.dev/solid-js/html"
+        }
+      }
+    </script>
+
+    <script src="./script-classic-inline.js"></script>
+    <script type="module" src="./script-module-inline.js"></script>
+
+    <script type="module">
+      import { loadScript, makeHook } from "/add-javascript";
+      import {
+        assertSingleCodeElement,
+        assertSingleScriptTag,
+        bumpCallbackCount,
+        getScriptEls,
+        runTest,
+        makePromise,
+      } from "/browser-utils";
+
+      const [solidJSHookLoaded, resolveSolidJSHook] = makePromise();
+
+      //
+      // SolidJS Hook test
+      //
+
+      import { createSignal, createEffect } from "solid-js";
+      import { render } from "solid-js/web";
+      import html from "solid-js/html";
+
+      const useScriptSolidJS = makeHook({
+        useState: createSignal,
+        useEffect: createEffect,
+      });
+
+      function SolidJSComponent() {
+        const [state] = useScriptSolidJS("./script-from-solidjs.js");
+
+        createEffect(() => {
+          if (state() !== "loaded") {
+            return;
+          }
+          bumpCallbackCount();
+          resolveSolidJSHook();
+        });
+
+        return html`
+          <div id="script-from-solidjs">Script loaded by SolidJS hook.</div>
+        `;
+      }
+
+      render(SolidJSComponent, document.getElementById("solidjs-root"));
+
+      //
+      // All tests
+      //
+
+      const allTests = [
+        solidJSHookLoaded,
+      ].map((testPromise, index) => {
+        return runTest(`Test #${index}`, testPromise);
+      });
+
+      //
+      // Signal back to the test runner
+      //
+
+      Promise.allSettled(allTests).then(() => {
+        console.log("all tests done");
+        window.signalTestRunFinished?.();
+      });
+    </script>
+  </body>
+</html>
