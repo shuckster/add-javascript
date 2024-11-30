@@ -21,63 +21,14 @@
     </div>
 
     <script type="module">
-      import { loadScript, makeHook } from "./add-javascript";
-      import { makePromise, delay } from "./utils.js";
-
-      let callbackCount = 0;
-
-      function drawCallbackCount() {
-        document.getElementById(
-          "callback-count",
-        ).innerHTML = `Callback count: ${callbackCount}`;
-      }
-
-      drawCallbackCount();
-
-      function bumpCallbackCount() {
-        callbackCount++;
-        drawCallbackCount();
-      }
-
-      function runTest(description, promise) {
-        const [timeoutPromise, _, reject] = makePromise();
-        setTimeout(reject, 10 * 1000, new Error('timeout'));
-        return Promise.race([
-          promise,
-          timeoutPromise,
-        ]).catch((err) => {
-          const { message } = err
-          console.log(description, ': Error:', message);
-          throw err;
-        });
-      }
-
-      //
-      // All tests
-      //
-
-      const getScriptEls = url => () =>
-        document.querySelectorAll(`script[src="${url}"]`);
-
-      const assertSingleScriptTag = selector => scriptEls => {
-        if (scriptEls.length === 1) {
-          return;
-        }
-        const el = document.querySelector(selector);
-        document.querySelector(selector).innerHTML = " <code>multiple-scripts</code>";
-      };
-
-      const assertSingleCodeElement = selector => () => {
-        const container = document.querySelector(selector);
-        if (!container) {
-          throw new Error('No container');
-        }
-        const els = container.querySelectorAll('code');
-        if (els.length === 1) {
-          return;
-        }
-        document.querySelector(selector).innerHTML += " <code>multiple-codes</code>";
-      };
+      import { loadScript, makeHook } from "/add-javascript";
+      import {
+        assertSingleCodeElement,
+        assertSingleScriptTag,
+        bumpCallbackCount,
+        getScriptEls,
+        runTest,
+      } from "/browser-utils";
 
       const allTests = [
         loadScript("./script-classic-inline.js")

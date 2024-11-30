@@ -5,14 +5,13 @@ import { setupTestContext } from "../context.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-describe("02-classic-inline", () => {
+describe("05-classic", () => {
   /** @type {import("../context.mjs").TTextContext} */
   let context;
 
   before(async () => {
     context = await setupTestContext(__dirname);
     await context.inPageTestsDidRun;
-    console.log('got here!');
   });
 
   after(async () => {
@@ -20,16 +19,17 @@ describe("02-classic-inline", () => {
     context.server.close();
   });
 
-  it("finds the text added by an inline script", async () => {
-    const { assertContentExists } = context;
+  it("asserts that a script can be inserted + not reinserted, but we get load-callbacks for both", async () => {
+    const { assertContentExists, assertContentAbsent } = context;
     //
-    // Inline standard script
+    // Standard script
     //
-    await assertContentExists("loaded", "#script-classic-inline");
+    await assertContentAbsent("multiple-scripts", "#script-classic");
+    await assertContentExists("loaded", "#script-classic");
 
     //
     // Callback count
     //
-    await assertContentExists("1", "#callback-count");
+    await assertContentExists("2", "#callback-count");
   });
 });

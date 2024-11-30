@@ -12,7 +12,7 @@
 
         <ul>
           <li>
-            <p id="script-classic-skipped">Skipped script should not load.</p>
+            <p id="script-classic">Standard script.</p>
           </li>
         </ul>
 
@@ -31,11 +31,15 @@
       } from "/browser-utils";
 
       const allTests = [
-        loadScript("./script-classic-inline.js")
-          .then(bumpCallbackCount)
-          .then(getScriptEls("./script-classic-inline.js"))
-          .then(assertSingleScriptTag("#script-classic-inline"))
-          .then(assertSingleCodeElement("#script-classic-inline")),
+        // duplicated to test memo capability
+        Promise.allSettled([
+          loadScript("./script-classic.js").then(bumpCallbackCount),
+          loadScript("./script-classic.js").then(bumpCallbackCount),
+        ])
+          .then(getScriptEls("./script-classic.js"))
+          .then(assertSingleScriptTag("#script-classic"))
+          .then(assertSingleCodeElement("#script-classic")),
+
       ].map((testPromise, index) => {
         return runTest(`Test #${index}`, testPromise);
       });

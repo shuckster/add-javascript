@@ -57,6 +57,8 @@ async function findAvailablePort(startPort) {
  * @param {string} __dirname
  */
 export async function httpServer(__dirname) {
+  const staggeredStartup = Math.random() * 500;
+  await delay(staggeredStartup);
   const availablePort = await findAvailablePort(SERVER_PORT);
 
   const app = new Koa();
@@ -65,6 +67,15 @@ export async function httpServer(__dirname) {
   app.use(async (ctx, next) => {
     if (ctx.path === "/add-javascript") {
       const filePath = path.join(__dirname, "../../../index.mjs");
+      ctx.type = "application/javascript";
+      ctx.body = fs.createReadStream(filePath);
+    } else {
+      await next();
+    }
+  });
+  app.use(async (ctx, next) => {
+    if (ctx.path === "/browser-utils") {
+      const filePath = path.join(__dirname, "../browser-utils.mjs");
       ctx.type = "application/javascript";
       ctx.body = fs.createReadStream(filePath);
     } else {
