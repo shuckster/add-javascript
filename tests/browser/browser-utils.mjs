@@ -1,6 +1,6 @@
 import { delay, makePromise } from "./utils.js";
 
-export { makePromise };
+export { delay, makePromise };
 
 let callbackCount = 0;
 
