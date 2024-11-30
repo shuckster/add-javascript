@@ -12,7 +12,7 @@
 
         <ul>
           <li>
-            <p id="mithril-root"></p>
+            <p id="react-root"></p>
           </li>
         </ul>
 
@@ -23,8 +23,8 @@
     <script type="importmap">
       {
         "imports": {
-          "mithril": "https://cdn.skypack.dev/mithril",
-          "mithril-hooks": "https://cdn.skypack.dev/mithril-hooks"
+          "react": "https://cdn.skypack.dev/react",
+          "react-dom": "https://cdn.skypack.dev/react-dom"
         }
       }
     </script>
@@ -40,38 +40,38 @@
         makePromise,
       } from "/browser-utils";
 
-      const [mithrilHookLoaded, resolveMithrilHook] = makePromise();
+      const [reactHookLoaded, resolveReactHook] = makePromise();
 
       //
-      // Mithril Hook test
+      // React Hook test
       //
 
-      import m from "mithril";
-      import * as mithrilHooks from "mithril-hooks";
+      import React from "react";
+      import ReactDOM from "react-dom";
 
-      const useScriptMithril = makeHook(mithrilHooks);
+      const useScriptReact = makeHook(React);
 
-      function MithrilComponent() {
-        const [state] = useScriptMithril("./script-from-mithril.js");
+      function ReactComponent(props) {
+        const [state] = useScriptReact("./script-from-react.js");
 
-        mithrilHooks.useEffect(() => {
+        React.useEffect(() => {
           if (state !== "loaded") {
             return;
           }
           bumpCallbackCount();
-          resolveMithrilHook();
+          resolveReactHook();
         }, [state]);
 
-        return m(
+        return React.createElement(
           "div",
-          { id: "script-from-mithril" },
-          "Script loaded by Mithril hook.",
+          { id: "script-from-react" },
+          "Script loaded by React hook.",
         );
       }
 
-      m.mount(
-        document.getElementById("mithril-root"),
-        mithrilHooks.withHooks(MithrilComponent),
+      ReactDOM.render(
+        React.createElement(ReactComponent),
+        document.getElementById("react-root"),
       );
 
       //
@@ -79,7 +79,7 @@
       //
 
       const allTests = [
-        mithrilHookLoaded,
+        reactHookLoaded,
       ].map((testPromise, index) => {
         return runTest(`Test #${index}`, testPromise);
       });

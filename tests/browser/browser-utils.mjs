@@ -1,5 +1,7 @@
 import { delay, makePromise } from "./utils.js";
 
+export { makePromise };
+
 let callbackCount = 0;
 
 function drawCallbackCount() {
