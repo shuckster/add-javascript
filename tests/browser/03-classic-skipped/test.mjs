@@ -5,7 +5,7 @@ import { setupTestContext } from "../context.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-describe("02-classic-inline", () => {
+describe("03-classic-skipped", () => {
   /** @type {import("../context.mjs").TTextContext} */
   let context;
 
@@ -19,16 +19,17 @@ describe("02-classic-inline", () => {
     context.server.close();
   });
 
-  it("finds the text added by an inline script", async () => {
-    const { assertContentExists } = context;
+  it("asserts that script-loading has been skipped", async () => {
+    const { assertContentExists, assertContentAbsent } = context;
     //
-    // Inline standard script
+    // Skipped script
     //
-    await assertContentExists("loaded", "#script-classic-inline");
+    await assertContentExists("skipped", "#script-classic-skipped");
+    await assertContentAbsent("loaded", "#script-classic-skipped");
 
     //
     // Callback count
     //
-    await assertContentExists("1", "#callback-count");
+    await assertContentExists("0", "#callback-count");
   });
 });

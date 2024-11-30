@@ -1,0 +1,105 @@
+/**
+ * Basic styles and mobile first
+ */
+
+body {
+  padding: 0;
+  margin: 0;
+
+  background: rgb(20, 20, 21);
+  color: rgb(200, 200, 210);
+
+  font-size: 16px;
+  letter-spacing: 0.05rem;
+  line-height: 1.4;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: -0.1;
+}
+
+.container {
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto; /* Center the container when its width is less than 1024px */
+  padding: 0;
+}
+
+.content {
+  padding: 1rem; /* Padding for mobile devices */
+}
+
+/* Media queries for various device widths */
+
+/* Tablet: 768px and up */
+@media screen and (min-width: 768px) {
+  body {
+    font-size: 18px;
+  }
+  .content {
+    padding: 2rem; /* Padding for tablet devices */
+  }
+}
+
+/* Small desktop: 992px and up */
+@media screen and (min-width: 992px) {
+  body {
+    font-size: 20px;
+  }
+  .content {
+    padding: 2.5rem; /* Padding for small desktop devices */
+  }
+}
+
+/* Large desktop: 1200px and up */
+@media screen and (min-width: 1200px) {
+  body {
+    font-size: 22px;
+  }
+  .content {
+    padding: 3rem; /* Padding for large desktop devices */
+  }
+}
+
+/**
+ * Generic styles
+ */
+
+a {
+  color: orange;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.8em;
+  letter-spacing: 0.075rem;
+}
+th,
+td {
+  text-align: left;
+  padding: 0.2rem 0.5rem;
+  border: 0.15rem solid rgb(50, 50, 51);
+}
+
+thead,
+tfoot {
+  background: rgb(30, 30, 31);
+  text-align: left;
+}
+
+tfoot {
+  font-weight: bold;
+}
+
+code {
+  color: rgb(212, 165, 84);
+  background: #222;
+  padding: 0.15em 0.5em;
+  border-radius: 0.5rem;
+}

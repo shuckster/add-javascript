@@ -12,7 +12,7 @@
 
         <ul>
           <li>
-            <p id="script-classic-defer">Deferred standard script.</p>
+            <p id="script-classic-skipped">Skipped script should not load.</p>
           </li>
         </ul>
 
@@ -78,9 +78,11 @@
       };
 
       const allTests = [
-        loadScript("./script-classic-defer.js", {
-          loadBehavior: "defer",
-        }).then(bumpCallbackCount),
+        loadScript("./script-classic-inline.js")
+          .then(bumpCallbackCount)
+          .then(getScriptEls("./script-classic-inline.js"))
+          .then(assertSingleScriptTag("#script-classic-inline"))
+          .then(assertSingleCodeElement("#script-classic-inline")),
       ].map((testPromise, index) => {
         return runTest(`Test #${index}`, testPromise);
       });
