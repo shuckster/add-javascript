@@ -44,9 +44,9 @@
   },
   "scripts": {
     "lint": "rome check src/ tests/",
-    "test": "concurrently \"pnpm run test:browser\" \"pnpm run test:exceptions\"",
-    "test:browser": "node ./tests/in-browser.js",
-    "test:exceptions": "node --test ./tests/exceptions.mjs",
+    "test": "node --test ./tests",
+    "test:browser": "node --test ./tests/browser",
+    "test:exceptions": "node --test ./tests/exceptions.test.mjs",
     "test:exceptions:watch": "node --test --watch ./tests/exceptions.mjs",
     "build": "concurrently \"pnpm run build:esbuild\" \"pnpm run build:declaration\"",
     "build:clean": "rimraf dist/ ; mkdir -p dist/{esm,cjs,browser}",
