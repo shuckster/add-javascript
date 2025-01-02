@@ -59,17 +59,23 @@ async function findAvailablePort(startPort) {
 /**
  * @param {string} __dirname
  */
-export async function httpServer(__dirname) {
+export async function httpServer(__dirname, depth = 3) {
   const staggeredStartup = Math.random() * 500;
   await delay(staggeredStartup);
   const availablePort = await findAvailablePort(SERVER_PORT);
 
   const app = new Koa();
   app.use(mount("/", serve(path.join(__dirname))));
-  app.use(mount("/src", serve(path.join(__dirname, "../../../src"))));
+
+  const rootDepth = depth;
+  const parentDepth = depth - 2;
+  const rootDir = Array.from({ length: rootDepth }, () => '..').join('/');
+  const parentDir = Array.from({ length: parentDepth }, () => '..').join('/');
+
+  app.use(mount("/src", serve(path.join(__dirname, rootDir, "src"))));
   app.use(async (ctx, next) => {
     if (ctx.path === "/add-javascript") {
-      const filePath = path.join(__dirname, "../../../index.mjs");
+      const filePath = path.join(__dirname, rootDir, "index.mjs");
       ctx.type = "application/javascript";
       ctx.body = fs.createReadStream(filePath);
     } else {
@@ -78,7 +84,7 @@ export async function httpServer(__dirname) {
   });
   app.use(async (ctx, next) => {
     if (ctx.path === "/browser-utils") {
-      const filePath = path.join(__dirname, "../browser-utils.mjs");
+      const filePath = path.join(__dirname, parentDir, "browser-utils.mjs");
       ctx.type = "application/javascript";
       ctx.body = fs.createReadStream(filePath);
     } else {

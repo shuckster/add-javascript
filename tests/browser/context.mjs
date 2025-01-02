@@ -16,8 +16,8 @@ import { httpServer, launchBrowser, openPage } from "./utils.mjs";
  * @param {string} __dirname
  * @returns {Promise<TTextContext>}
  */
-export async function setupTestContext(__dirname) {
-  const $server = await httpServer(__dirname);
+export async function setupTestContext(__dirname, depth = 3) {
+  const $server = await httpServer(__dirname, depth);
   const $browser = await launchBrowser();
   const $page = await openPage($browser.page, $server.port);
 

@@ -1,0 +1,159 @@
+<html>
+  <head>
+    <title>add-javascript</title>
+    <link rel="stylesheet" href="./dark.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>add-javascript / tests</h1>
+
+        <p>To run the tests, use <code>pnpm run test</code> from the CLI.</p>
+
+        <ul>
+          <li>
+            <p id="react-root"></p>
+          </li>
+        </ul>
+
+        <p id="callback-count"></p>
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://cdn.skypack.dev/react",
+          "react-dom": "https://cdn.skypack.dev/react-dom"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { loadScript, makeHook } from "/add-javascript";
+      import {
+        assertSingleCodeElement,
+        assertSingleScriptTag,
+        bumpCallbackCount,
+        getScriptEls,
+        runTest,
+        makePromise,
+      } from "/browser-utils";
+
+      const [testDidFinish, finishTest] = makePromise();
+
+      //
+      // React Hook test
+      //
+
+      import React from "react";
+      import ReactDOM from "react-dom";
+
+      const useScriptReact = makeHook(React);
+
+      function ReactEmptyPageComponent(props) {
+        React.useEffect(bumpCallbackCount, []);
+        return React.createElement(
+          "div",
+          null,
+          "Empty page"
+        );
+      }
+
+      function ReactPageComponent(props) {
+        const [state, detail] = useScriptReact("./script-from-react.js");
+        const [isThirtPartyObjectReady, setReady] = React.useState(false);
+
+        React.useEffect(bumpCallbackCount, []);
+
+        React.useEffect(() => {
+          if (detail?.type === "already-added") {
+            bumpCallbackCount();
+          }
+        }, [detail]);
+
+        React.useEffect(() => {
+          if (state !== "loaded") {
+            return;
+          }
+          setReady(true);
+        }, [state]);
+
+        React.useEffect(() => {
+          if (!isThirtPartyObjectReady) {
+            return;
+          }
+          bumpCallbackCount();
+          window.thirdPartyObject.renderLoaded();
+        }, [isThirtPartyObjectReady]);
+
+        return React.createElement(
+          "div",
+          { id: "script-from-react" },
+          "Script loaded by React hook."
+        );
+      }
+
+      let intervalId;
+
+      function ReactRootComponent(props) {
+        const [renderCount, setRenderCount] = React.useState(0);
+        const [shouldRender, setShouldRender] = React.useState(false);
+
+        React.useEffect(() => {
+          bumpCallbackCount();
+          switch (renderCount) {
+            case 0: setShouldRender(true); break;
+            case 1: setShouldRender(false); break;
+            case 2: setShouldRender(true); break;
+            case 3: {
+              clearInterval(intervalId);
+              finishTest();
+            }
+          }
+        }, [renderCount]);
+
+        React.useEffect(() => {
+          intervalId = setInterval(() => {
+            setRenderCount(x => x + 1);
+          }, 100);
+        }, []);
+
+        return React.createElement(
+          "div",
+          null,
+          React.createElement(
+            shouldRender
+              ? ReactPageComponent 
+              : ReactEmptyPageComponent
+          )
+        );
+      }
+
+      ReactDOM.render(
+        React.createElement(ReactRootComponent),
+        document.getElementById("react-root")
+      );
+
+      //
+      // All tests
+      //
+
+      const allTests = [
+        testDidFinish,
+      ].map((testPromise, index) => {
+        return runTest(`Test #${index}`, testPromise);
+      });
+
+      //
+      // Signal back to the test runner
+      //
+
+      Promise.allSettled(allTests).then(() => {
+        console.log("all tests done");
+        window.signalTestRunFinished?.();
+      });
+    </script>
+  </body>
+</html>
+
