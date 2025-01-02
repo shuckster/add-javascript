@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.0.9] - 2025-01-02
+
+### Updated 
+
+- Refactored test-suite to use Node Test Runner
+- `index.d.ts`, removed `_index.d.ts` 
+
 ## [1.0.8] - 2024-11-29
 
 ### Fixed 
